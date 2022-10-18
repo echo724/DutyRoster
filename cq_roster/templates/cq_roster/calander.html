@@ -1,0 +1,134 @@
+{% load static %}
+
+<div class="calendar">
+    <div class="calendar_header position-relative border-bottom border-2 border-dark w-100">
+        <div class="btn-group position-absolute translate-middle-y float-end month-selector" role="group"
+            aria-label="Basic mixed styles example">
+            <button type="button" class="btn btn-outline-dark btn-sm selector" onclick="getCalendar(0)">이번 달</button>
+            <button type="button" class="btn btn-outline-dark btn-sm selector" onclick="getCalendar(1)">다음 달</button>
+        </div>
+        <div class="ym-wrapper text-center">
+            <span class="year"></span>년
+            <span class="month"></span>월
+        </div>
+    </div>
+    <div class="calendar_main">
+        <div class="days">
+            <div class="day">일</div>
+            <div class="day">월</div>
+            <div class="day">화</div>
+            <div class="day">수</div>
+            <div class="day">목</div>
+            <div class="day">금</div>
+            <div class="day">토</div>
+        </div>
+        <div class="dates"></div>
+    </div>
+</div>
+<script>
+    let date = new Date();
+    let this_duty_dates = JSON.parse("{{ this_duty_dates_js | escapejs }}");
+    let next_duty_dates = JSON.parse("{{ next_duty_dates_js | escapejs }}");
+
+
+    const renderCalender = (next) => {
+        const viewYear = date.getFullYear();
+        const viewMonth = (date.getMonth() + next) == 12 ? 0 : (date.getMonth() + next);
+        let duty_dates = [];
+        let duty_obj = [];
+
+        if (next == 0) {
+            duty_obj = this_duty_dates
+            this_duty_dates.forEach((this_duty_date) => {
+                duty_dates.push(new Date(this_duty_date.duty_date))
+            });
+        } else {
+            duty_obj = next_duty_dates
+            next_duty_dates.forEach((next_duty_date) => {
+                duty_dates.push(new Date(next_duty_date.duty_date))
+            });
+        }
+
+        document.querySelector('.year').textContent = `${viewYear}`;
+        document.querySelector('.month').textContent = `${viewMonth + 1}`;
+
+        const prevLast = new Date(viewYear, viewMonth, 0);
+        const thisLast = new Date(viewYear, viewMonth + 1, 0);
+
+        const PLDate = prevLast.getDate();
+        const PLDay = prevLast.getDay();
+
+        const TLDate = thisLast.getDate();
+        const TLDay = thisLast.getDay();
+
+        const prevDates = [];
+        const thisDates = [...Array(TLDate + 1).keys()].slice(1);
+        const nextDates = [];
+
+        if (PLDay !== 6) {
+            for (let i = 0; i < PLDay + 1; i++) {
+                prevDates.unshift(PLDate - i);
+            }
+        }
+
+        for (let i = 1; i < 7 - TLDay; i++) {
+            nextDates.push(i);
+        }
+
+        const dates = prevDates.concat(thisDates, nextDates);
+        const firstDateIndex = dates.indexOf(1);
+        const lastDateIndex = dates.lastIndexOf(TLDate);
+
+        dates.forEach((date, i) => {
+            const condition = i >= firstDateIndex && i < lastDateIndex + 1 ?
+                'this' :
+                'other';
+            dates[i] = `<div class="date ${condition} d-flex flex-column"><span>${date}</span></div>`;
+        });
+
+        document.querySelector('.dates').innerHTML = dates.join('');
+
+        duty_dates.forEach((duty_date, i) => {
+            if (viewMonth === duty_date.getMonth() && viewYear === duty_date.getFullYear()) {
+                for (let date of document.querySelectorAll('.this')) {
+                    if (parseInt(date.innerText) === duty_date.getDate()) {
+                        date.classList.add('duty');
+                        switch (duty_obj[i].date_score) {
+                            case 1:
+                                date.classList.add('bg-success');
+                                date.classList.add('text-white');
+                                date.innerHTML += `<span class="name">${duty_obj[i].worker}</span>`
+                                break;
+                            case 2:
+                                date.classList.add('bg-primary');
+                                date.classList.add('text-white');
+                                date.innerHTML += `<span class="name">${duty_obj[i].worker}</span>`
+                                break;
+                            case 3:
+                                date.classList.add('bg-warning');
+                                date.classList.add('text-dark');
+                                date.innerHTML += `<span class="name">${duty_obj[i].worker}</span>`
+                                break;
+                            case 4:
+                                date.classList.add('bg-danger');
+                                date.classList.add('text-white');
+                                date.innerHTML += `<span class="name">${duty_obj[i].worker}</span>`
+                                break;
+                            case 5:
+                                date.classList.add('bg-dark');
+                                date.classList.add('text-white');
+                                date.innerHTML += `<span class="name">${duty_obj[i].worker}</span>`
+                                break;
+                        }
+                        break;
+                    }
+                }
+            }
+        });
+    };
+
+    renderCalender(0);
+    function getCalendar(next) {
+        renderCalender(next);
+    }
+</script>

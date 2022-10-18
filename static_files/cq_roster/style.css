@@ -1,0 +1,83 @@
+.calendar {
+    width: 100%;
+    margin: auto;
+    padding-bottom: 50px;
+}
+
+.calendar_header {
+    display: inline-block;
+}
+
+.ym-wrapper {
+    font-size: 20px;
+}
+
+.go-today {
+    width: 80%;
+    border-left: 1px solid #333333;
+    border-right: 1px solid #333333;
+}
+
+.calendar_main{
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.month-selector{
+    top: 45%;
+    right: 0%
+}
+
+.selector{
+    font-size:13px;
+}
+
+.days {
+    display: flex;
+    margin: 25px 0 10px;
+}
+
+.day {
+    width: calc(100% / 7);
+    text-align: center;
+    transition: all .3s;
+}
+
+.dates {
+    display: flex;
+    flex-flow: row wrap;
+    border: 1px solid #333333;
+}
+
+.date {
+    width: calc(100% / 7);
+    padding: 5% 1%;
+    text-align: center;
+    border: 1px solid #333333;
+    transition: all .3s;
+}
+.name{
+    font-size: 11px;
+}
+.day:nth-child(7n + 1),
+.date:nth-child(7n + 1) {
+    color: #D13E3E;
+}
+
+.day:nth-child(7n),
+.date:nth-child(7n) {
+    color: #396EE2;
+}
+
+.other {
+    color: rgba(88, 88, 88, 0.315) !important;
+}
+
+.duty {
+    position: relative;
+}
+
+.selected{
+    background-color: black;
+    color: #ffffff !important;
+}

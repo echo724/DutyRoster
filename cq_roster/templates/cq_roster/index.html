@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<h1 class="text-center mt-3 mb-4">베럭 당직표</h1>
+
+{% include 'cq_roster/calander.html' %}
+
+<table class="table">
+    <thead class="table-light">
+        <tr>
+            <th>이름</th>
+            <th>이번 달</th>
+            <th>이번 달 총점</th>
+            <th>다음 달</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for katusa in katusas %}
+        <tr>
+            <td>{{ katusa.name }}</td>
+            <td>
+                {% for date in katusa.this_duty_dates.all %}
+                {% if not forloop.last %}
+                {{ date.duty_date | date:"n월 j일" }},
+                {% else %}
+                {{ date.duty_date | date:"n월 j일" }}
+                {% endif %}
+                {% endfor %}
+            </td>
+            <td>
+                {{ katusa.total_score }}
+            </td>
+            <td>
+                {% for date in katusa.next_duty_dates.all %}
+                {% if not forloop.last %}
+                {{ date.duty_date | date:"n월 j일" }},
+                {% else %}
+                {{ date.duty_date | date:"n월 j일" }}
+                {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
